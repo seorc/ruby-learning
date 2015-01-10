@@ -44,25 +44,23 @@ class MatrixCalc
 	end
 
 	def self.mul(ma, mb)
-		ta = transpose ma
-		if ta.length != mb.length
+		tb = transpose mb
+		if ma[0].length != tb[0].length
 			puts "Number of columns in mA must match number of rows in mB"
 			return
 		end
 
-		#tb = transpose mb
-		res = []
+		# Size of resulting array will be #ma.rows x #mb.columns (rows x columns).
+		# Notice that this array is initialized to zeroes.
+		res = Array.new(ma.length) { Array.new(tb.length, 0) }
+		p res
+		puts
 		for n in 0...ma.length
-
 			for m in 0...ma[n].length
-				if res.length == n
-					res[n] = []
-				end
-				for o in 0...mb.length
-					if res[n].length == o
-						res[n][o] = 0
-					end
+				for o in 0...tb.length
 					res[n][o] += ma[n][m] * mb[m][o]
+					print "n=#{n} m=#{m} o=#{o}\tres[n#{n}][o#{o}] += #{ma[n][m]} (ma[n#{n}][m#{m}]) * #{mb[m][o]} (mb[m#{m}][o#{o}])\t-> "
+					p res
 				end
 			end
 		end
@@ -252,7 +250,4 @@ class Matrix
 	end
 end
 
-
-
 Matrix.main_prompt
-
