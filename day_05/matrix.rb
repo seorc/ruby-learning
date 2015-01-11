@@ -59,8 +59,6 @@ class MatrixCalc
 			for m in 0...ma[n].length
 				for o in 0...tb.length
 					res[n][o] += ma[n][m] * mb[m][o]
-					print "n=#{n} m=#{m} o=#{o}\tres[n#{n}][o#{o}] += #{ma[n][m]} (ma[n#{n}][m#{m}]) * #{mb[m][o]} (mb[m#{m}][o#{o}])\t-> "
-					p res
 				end
 			end
 		end
@@ -106,7 +104,7 @@ class Matrix
 
 	def load_row(num, cols)
 		while true
-			els = self.class.prompt "Row #{num}: write a comma-separated row of #{cols} elements)"
+			els = self.class.prompt "Row #{num}: write a comma-separated row of #{cols} elements"
 			els = els.split.join.split(",")  # Remove spaces and then separate by commas.
 			ints, are_ints = [], true
 			els.each do |e|
