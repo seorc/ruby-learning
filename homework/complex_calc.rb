@@ -18,13 +18,25 @@ class String
 end
 
 class Complexx
+	def rad_to_deg(radians)
+		(radians / Math::PI) * 180
+	end
+
 	def initialize(r, i)
 		@real = r
 		@imaginary = i
+		@angle = rad_to_deg Math.atan(@imaginary.abs / @real.abs)
+	end
+
+	def polar
+		"#{@angle}"
+	end
+
+	def exponential
 	end
 
 	def to_s
-		"#{@real}#{@imaginary >= 0 ? '+' : ''}#{@imaginary}i"
+		"#{@real}#{@imaginary >= 0 ? '+' : ''}#{@imaginary}i, Polar: #{@angle}"
 	end
 end
 
@@ -48,7 +60,7 @@ while true
 	res = []
 	complex.each do |x|
 		if !x.is_f?
-			puts "Elements entered must be integers of floats"
+			puts "Elements entered must be floats"
 			next
 		end
 		res.push(x.to_f)
@@ -56,3 +68,4 @@ while true
 	c = Complexx.new *res
 	puts c
 end
+
