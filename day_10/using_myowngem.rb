@@ -1,0 +1,3 @@
+require "example"
+
+Example.saluda
