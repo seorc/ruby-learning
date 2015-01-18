@@ -19,6 +19,9 @@ class String
 end
 
 class Complexx
+
+	attr_reader :real, :imaginary
+
 	PRECISION = 2
 	DEGREES_PRECISION = 2
 
@@ -38,7 +41,7 @@ class Complexx
 	end
 
 	def in_ri_plane_radians_proc
-		# Determine which operation to use to determine the angle acording
+		# Determine which operation to use to determine the radians acording
 		# to this number's parts taken as coordinates on a plane.
 		case
 		when @real < 0 && @imaginary >= 0  # 2nd cuadrant.
@@ -53,32 +56,132 @@ class Complexx
 	end
 
 	def polar
-		"#{@vector_lenght.round(PRECISION)} ∠ #{@angle.round(DEGREES_PRECISION)}°"
+		"  >>Pol #{@vector_lenght.round(PRECISION)} ∠ #{@angle.round(DEGREES_PRECISION)}°"
 	end
 
 	def exponential
-		"#{@vector_lenght.round(PRECISION)}e ^ #{@radians.round(PRECISION)}i"
+		"  >>Exp #{@vector_lenght.round(PRECISION)}e ^ #{@radians.round(PRECISION)}i"
+	end
+
+	def rectangular
+		"  >>Rec #{@real}#{@imaginary >= 0 ? ' + ' : ' - '}#{@imaginary.abs	}i"
 	end
 
 	def to_s
-		"#{@real}#{@imaginary >= 0 ? ' + ' : ' - '}#{@imaginary.abs	}i" \
-		"\n >> Polar: #{polar}" \
-		"\n >> Exp: #{exponential}"
+		"#{rectangular}" \
+		"\n#{polar}" \
+		"\n#{exponential}"
+	end
+
+	def +(b)
+		if b.class == self.class
+			return self.class.new(self.real + b.real, self.imaginary + b.imaginary)
+		end
+		raise "Wrong object type"
+	end
+
+	def -(b)
+		if b.class == self.class
+			return self.class.new(self.real - b.real, self.imaginary - b.imaginary)
+		end
+		raise "Wrong object type"
+	end
+
+	def /(b)
+		if b.class == self.class
+			conjugate = self.class.new(b.real, -1 * b.imaginary)  # Conjutate of b.
+			numerator = self * conjugate
+			denominator = b * conjugate
+			res = self.class.new(
+				numerator.real / denominator.real,
+				numerator.imaginary / denominator.real)
+			return res
+		end
+		raise "Wrong object type"
+	end
+
+	def *(b)
+		if b.class == self.class
+			return self.class.new(
+				(self.real * b.real) - (self.imaginary * b.imaginary),
+				(self.real * b.imaginary) + (self.imaginary * b.real))
+		end
+		raise "Wrong object type"
 	end
 end
 
 def prompt(msg)
-	print "#{msg} ('bye' to exit): "
+	print "#{msg} (? for help)> "
 	r = gets.chomp
 	if r == "bye"
 		puts "See ya!"
 		exit
+	elsif r == "?"
+		show_help
+		return ""
 	end
 	r
 end
 
+def show_help
+	puts
+	puts "\tEnter a comma-separated complex number, like so:"
+	puts
+	puts "\t  2,-3.2\tThis one represents 2 - 3.2i"
+	puts
+	puts "\tYou can also perform operations with complex numbers by entering a symbol:"
+	puts
+	puts "\t  +, -, *, /\tSum, substract, multyply, divide"
+	puts "\t  r, p, e\tShow the entered number in rectangular, polar or exponential form"
+	puts
+	puts "\tSpaces are ignored in your expresion."
+	puts
+	puts "\tWrite 'bye' to exit."
+	puts
+end
+
+b_operations = {
+	"+" => lambda { |a, b| return a + b },
+	"-" => lambda { |a, b| return a - b },
+	"*" => lambda { |a, b| return a * b },
+	"/" => lambda { |a, b| return a / b },
+	
+}
+
+u_operations = {
+	"r" => lambda { |a| a.rectangular },
+	"p" => lambda { |a| a.polar },
+	"e" => lambda { |a| a.exponential },
+}
+
+operations = b_operations.merge u_operations
+
+current = nil
+operation = nil
+
 while true
-	complex = prompt "Write a complex number in the form 'r,i'"
+	complex = prompt "Complex calc#{operation.nil? ? "" : " [#{operation[1]}]"}"
+	complex = complex.split.join ""
+
+	if complex == ""
+		next
+	end
+
+	if operations.keys.include? complex
+		if current.nil?
+			puts "You must have entered a number to perform some operations"
+			next
+		end
+		operation = operations[complex], complex
+		if u_operations.include? complex
+			puts "#{operation[0].call current}"
+			operation = nil
+		end
+		next
+	end
+
+	op = complex.split
+
 	complex = complex.split(",")
 	
 	res = []
@@ -90,11 +193,18 @@ while true
 	end
 
 	if res.length != 2
-		puts "The number must have a real and imaginary part"
+		puts "Write a complex number"
 		next
 	end
 
-	c = Complexx.new *res
-	puts c
+	previous = current
+	current = Complexx.new *res
+	if !operation.nil? && b_operations.include?(operation[1])
+		current = operation[0].call previous, current
+		puts current.rectangular
+		operation = nil
+	else
+		puts current.rectangular
+	end
 end
 
