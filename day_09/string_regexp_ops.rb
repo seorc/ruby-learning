@@ -34,18 +34,3 @@ loop do
 		puts "Great! #{tel} (Lada: #{tt[1]}, Phone: #{tt[2]}#{tt[3]})"
 	end
 end
-
-loop do
-	print "Write an IP address: "
-	ip = gets.chomp
-	break if ip == ""
-
-	iipp = /^(\d{1,2}|1\d{2}|2[0-5]{2})(\.(\d{1,2}|1\d{2}|2[0-5]{2})){3}$/.match(ip)
-	iipp = /^(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$/.match(ip)
-
-	if iipp.nil?
-		puts "Invalid IP!"
-	else
-		puts "#{ip} is a valid IP!"
-	end
-end
