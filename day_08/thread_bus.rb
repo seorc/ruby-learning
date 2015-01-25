@@ -8,15 +8,12 @@ class Bus
 		@capacity = capacity
 		@id = id
 		@passengers = []
-		#@go_lock = Mutext.new
-		#@go_lock.lock
+		sleep 1
 		puts "#{self} is ready"
 	end
 
 	def go
-		#@go.lock
 		puts "#{self} has gone"
-		#@go.unlock
 		return true
 	end
 
@@ -24,8 +21,6 @@ class Bus
 		@passengers.push(pass)
 		puts "Passenger #{pass} aborded #{self}"
 		return @passengers.count < @capacity
-		#	@go.unlock
-		#end
 	end
 
 	def to_s
@@ -46,14 +41,15 @@ end
 
 
 t_pass = Thread.new do
-	160.times do |pass|
-		sleep(0.3)
+	130.times do |pass|
+		sleep(0.4)
 		passenger_q << Passenger.new(pass)
 	end
 end
 
 t_bus = Thread.new do
 	5.times do |bus|
+		sleep 2
 		b = Bus.new(bus, 20)
 		while b.add_passenger(passenger_q.pop)
 			next
