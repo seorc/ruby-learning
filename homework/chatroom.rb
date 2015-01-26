@@ -35,7 +35,6 @@ class ChatMaster
   end
 
   def kickof(user)
-    user.socket.puts = "000EOF"
     user.socket.close
     @users.delete user.name
   end
